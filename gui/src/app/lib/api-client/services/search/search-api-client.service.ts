@@ -940,6 +940,21 @@ export class SearchAPIClient implements SearchAPIClientInterface {
   /**
    * Response generated for [ 200 ] HTTP response code.
    */
+  listEpisodeRatings(
+    requestHttpOptions?: HttpOptions
+  ): Observable<models.RskEpisodeRatingList> {
+    const path = `/api/transcript/ratings`;
+    const options: APIHttpOptions = {
+      ...this.options,
+      ...requestHttpOptions,
+    };
+
+    return this.sendRequest<models.RskEpisodeRatingList>('GET', path, options);
+  }
+
+  /**
+   * Response generated for [ 200 ] HTTP response code.
+   */
   getTranscript(
     args: {
       epid: string,

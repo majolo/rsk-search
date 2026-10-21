@@ -295,6 +295,17 @@ service TranscriptService {
       tags: "search"
     };
   }
+
+  rpc ListEpisodeRatings(google.protobuf.Empty) returns (EpisodeRatingList) {
+    option (google.api.http) = {
+      get: "/api/transcript/ratings"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      operation_id: "listEpisodeRatings",
+      summary: "Fetch episode scores and vote counts for the rating grid."
+      tags: "search"
+    };
+  }
 }
 
 enum ContributionState {
@@ -690,4 +701,23 @@ message BulkSetTranscriptTagsRequest {
 message Tag {
   string name = 1;
   string timestamp = 2;
+}
+
+message EpisodeRatingList {
+  repeated EpisodeRating episodes = 1;
+}
+
+message EpisodeRating {
+  string id = 1;
+  string publication = 2;
+  PublicationType publication_type = 3;
+  int32 series = 4;
+  int32 episode = 5;
+  string name = 6;
+  optional float rating_score = 7;
+  int32 num_rating_scores = 8;
+  bool transcript_available = 9;
+  bool bestof = 10;
+  bool special = 11;
+  string release_date = 12;
 }

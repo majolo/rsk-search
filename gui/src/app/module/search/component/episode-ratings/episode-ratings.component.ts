@@ -1,13 +1,13 @@
 import { Component, EventEmitter, HostListener, OnDestroy } from '@angular/core';
 import { SearchAPIClient } from 'lib/api-client/services/search';
 import { takeUntil } from 'rxjs/operators';
-import { RskShortTranscript, RskTranscriptList } from 'lib/api-client/models';
+import { RskShortTranscript, RskTranscriptList, RskEpisodeRatingList } from 'lib/api-client/models';
 import { EpisodeSummaryComponent } from '../episode-summary/episode-summary.component';
 import { LoadingSpinnerComponent } from '../../../shared/component/loading-spinner/loading-spinner.component';
 import { NgClass, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Neq } from 'lib/filter-dsl/filter';
-import { Null } from 'lib/filter-dsl/value';
+import { And, Eq, Neq, Or } from 'lib/filter-dsl/filter';
+import { Null, Str } from 'lib/filter-dsl/value';
 
 interface RatingsGridColumn {
   key: string;
@@ -48,6 +48,9 @@ export class EpisodeRatingsComponent implements OnDestroy {
   sortDirection: 'desc' | 'asc' = 'desc';
 
   grid: RatingsGrid = { groups: [], columns: [], episodes: [], cells: {} };
+
+  gridError: boolean = false;
+  readonly legendScores = [0, 1, 2, 3, 4, 5];
 
   private gridLoaded: boolean = false;
 
@@ -102,7 +105,7 @@ export class EpisodeRatingsComponent implements OnDestroy {
         sortDirection: this.sortDirection,
         page: this.listPage,
         pageSize: this.listPageSize,
-        filter: Neq('rating_score', Null()).print(),
+        filter: And(Neq('rating_score', Null()), Or(Eq('publication_type', Str('radio')), Eq('publication_type', Str('podcast')))).print(),
       })
       .pipe(takeUntil(this.destroy$))
       .subscribe((res: RskTranscriptList) => {
@@ -138,13 +141,19 @@ export class EpisodeRatingsComponent implements OnDestroy {
   }
 
   loadGrid(): void {
+    this.gridError = false;
     this.loading.push(true);
     this.apiClient
-      .listTranscripts({ sortField: 'rating_score', sortDirection: 'desc', filter: Neq('rating_score', Null()).print() })
+      .listEpisodeRatings()
       .pipe(takeUntil(this.destroy$))
-      .subscribe((res: RskTranscriptList) => {
-        this.grid = this.buildGrid(res.episodes || []);
-        this.gridLoaded = true;
+      .subscribe({
+        next: (res: RskEpisodeRatingList) => {
+          this.grid = this.buildGrid(res.episodes || []);
+          this.gridLoaded = true;
+        },
+        error: () => {
+          this.gridError = true;
+        },
       })
       .add(() => {
         this.loading.pop();
@@ -158,7 +167,14 @@ export class EpisodeRatingsComponent implements OnDestroy {
     // map rating (0-5) to a hue from red (0) to green (120)
     const clamped = Math.max(0, Math.min(5, rating));
     const hue = (clamped / 5) * 120;
-    return `hsl(${hue}, 65%, 45%)`;
+    return `hsl(${hue}, 65%, 70%)`;
+  }
+
+  ratingLabel(episode: RskShortTranscript): string {
+    const votes = episode.numRatingScores || 0;
+    const name = episode.name ? `: ${episode.name}` : '';
+    const transcript = episode.transcriptAvailable ? '' : '. Transcript unavailable';
+    return `${episode.publication.toUpperCase()} S${episode.series}E${episode.episode}${name} — ${episode.ratingScore.toFixed(2)}/5 from ${votes} ${votes === 1 ? 'rating' : 'ratings'}${transcript}`;
   }
 
   private buildGrid(episodes: RskShortTranscript[]): RatingsGrid {
@@ -173,7 +189,8 @@ export class EpisodeRatingsComponent implements OnDestroy {
       const publication = ep.publication || 'unknown';
       const series = ep.series || 0;
       const key = `${publication}|${series}`;
-      const releaseTime = ep.releaseDate ? new Date(ep.releaseDate).getTime() : Number.MAX_SAFE_INTEGER;
+      const parsedReleaseTime = ep.releaseDate ? new Date(ep.releaseDate).getTime() : NaN;
+      const releaseTime = Number.isFinite(parsedReleaseTime) ? parsedReleaseTime : Number.MAX_SAFE_INTEGER;
       if (!columnsMap[key]) {
         columnsMap[key] = {
           key: key,
@@ -194,12 +211,15 @@ export class EpisodeRatingsComponent implements OnDestroy {
       episodeNumbers.add(ep.episode);
     }
 
+    // Keep each publication together even when its series overlap another
+    // publication's release dates (for example the podcasts and BBC specials).
+    const publicationStarts: { [publication: string]: number } = {};
+    for (const col of Object.values(columnsMap)) {
+      publicationStarts[col.publication] = Math.min(publicationStarts[col.publication] ?? Number.MAX_SAFE_INTEGER, col.firstReleaseTime);
+    }
     const columns = Object.values(columnsMap).sort((a, b) => {
-      if (a.firstReleaseTime !== b.firstReleaseTime) {
-        return a.firstReleaseTime - b.firstReleaseTime;
-      }
       if (a.publication !== b.publication) {
-        return a.publication.localeCompare(b.publication);
+        return publicationStarts[a.publication] - publicationStarts[b.publication] || a.publication.localeCompare(b.publication);
       }
       return a.series - b.series;
     });
@@ -213,7 +233,11 @@ export class EpisodeRatingsComponent implements OnDestroy {
           last.firstReleaseTime = col.firstReleaseTime;
         }
       } else {
-        groups.push({ publication: col.publication, colspan: 1, firstReleaseTime: col.firstReleaseTime });
+        groups.push({
+          publication: col.publication,
+          colspan: 1,
+          firstReleaseTime: col.firstReleaseTime,
+        });
       }
     }
 

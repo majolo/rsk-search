@@ -37,6 +37,8 @@ export { RskDonationArgs } from './rsk-donation-args.model';
 export { RskDonationRecipient } from './rsk-donation-recipient.model';
 export { RskDonationRecipientList } from './rsk-donation-recipient-list.model';
 export { RskDonationStats } from './rsk-donation-stats.model';
+export { RskEpisodeRating } from './rsk-episode-rating.model';
+export { RskEpisodeRatingList } from './rsk-episode-rating-list.model';
 export { RskFieldMeta } from './rsk-field-meta.model';
 export { RskFieldValue } from './rsk-field-value.model';
 export { RskFieldValueList } from './rsk-field-value-list.model';

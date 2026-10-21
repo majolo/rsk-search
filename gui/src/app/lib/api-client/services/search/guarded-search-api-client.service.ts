@@ -435,6 +435,13 @@ export class GuardedSearchAPIClient extends SearchAPIClient {
       .pipe(tap((res: any) => guards.isRskTranscriptChunkList(res) || console.error(`TypeGuard for response 'RskTranscriptChunkList' caught inconsistency.`, res)));
   }
 
+  listEpisodeRatings(
+    requestHttpOptions?: HttpOptions
+  ): Observable<models.RskEpisodeRatingList> {
+    return super.listEpisodeRatings(requestHttpOptions)
+      .pipe(tap((res: any) => guards.isRskEpisodeRatingList(res) || console.error(`TypeGuard for response 'RskEpisodeRatingList' caught inconsistency.`, res)));
+  }
+
   getTranscript(
     args: {
       epid: string,

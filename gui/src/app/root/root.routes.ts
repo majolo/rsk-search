@@ -18,6 +18,7 @@ import { RandomQuoteComponent } from '../module/more-shite/page/random-quote/ran
 import { SongSearchComponent } from '../module/more-shite/page/song-search/song-search.component';
 import { CommunityProjectsComponent } from '../module/more-shite/page/community-projects/community-projects.component';
 import { ArchiveComponent } from '../module/more-shite/page/archive/archive.component';
+import { EpisodeRatingsPageComponent } from '../module/more-shite/page/episode-ratings/episode-ratings.component';
 
 export const routes: Routes = [
   {
@@ -92,6 +93,10 @@ export const routes: Routes = [
     component: IndexComponent,
     children: [
       {
+        path: 'episode-ratings',
+        component: EpisodeRatingsPageComponent,
+      },
+      {
         path: 'random-quote',
         component: RandomQuoteComponent,
       },
@@ -113,7 +118,7 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/more-shite/random-quote',
+        redirectTo: '/more-shite/episode-ratings',
         pathMatch: 'full',
       },
     ],

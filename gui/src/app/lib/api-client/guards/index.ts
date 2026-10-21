@@ -573,6 +573,50 @@ export function isRskDonationStats(arg: any): arg is models.RskDonationStats {
   );
   }
 
+export function isRskEpisodeRating(arg: any): arg is models.RskEpisodeRating {
+  return (
+  arg != null &&
+  typeof arg === 'object' &&
+    // bestof?: boolean
+    ( typeof arg.bestof === 'undefined' || typeof arg.bestof === 'boolean' ) &&
+    // episode?: number
+    ( typeof arg.episode === 'undefined' || typeof arg.episode === 'number' ) &&
+    // id?: string
+    ( typeof arg.id === 'undefined' || typeof arg.id === 'string' ) &&
+    // name?: string
+    ( typeof arg.name === 'undefined' || typeof arg.name === 'string' ) &&
+    // numRatingScores?: number
+    ( typeof arg.numRatingScores === 'undefined' || typeof arg.numRatingScores === 'number' ) &&
+    // publication?: string
+    ( typeof arg.publication === 'undefined' || typeof arg.publication === 'string' ) &&
+    // publicationType?: RskPublicationType
+    ( typeof arg.publicationType === 'undefined' || isRskPublicationType(arg.publicationType) ) &&
+    // ratingScore?: number
+    ( typeof arg.ratingScore === 'undefined' || typeof arg.ratingScore === 'number' ) &&
+    // releaseDate?: string
+    ( typeof arg.releaseDate === 'undefined' || typeof arg.releaseDate === 'string' ) &&
+    // series?: number
+    ( typeof arg.series === 'undefined' || typeof arg.series === 'number' ) &&
+    // special?: boolean
+    ( typeof arg.special === 'undefined' || typeof arg.special === 'boolean' ) &&
+    // transcriptAvailable?: boolean
+    ( typeof arg.transcriptAvailable === 'undefined' || typeof arg.transcriptAvailable === 'boolean' ) &&
+
+  true
+  );
+  }
+
+export function isRskEpisodeRatingList(arg: any): arg is models.RskEpisodeRatingList {
+  return (
+  arg != null &&
+  typeof arg === 'object' &&
+    // episodes?: RskEpisodeRating[]
+    ( typeof arg.episodes === 'undefined' || (Array.isArray(arg.episodes) && arg.episodes.every((item: unknown) => isRskEpisodeRating(item))) ) &&
+
+  true
+  );
+  }
+
 export function isRskFieldMeta(arg: any): arg is models.RskFieldMeta {
   return (
   arg != null &&

@@ -1510,6 +1510,27 @@
         "tags": ["search"]
       }
     },
+    "/api/transcript/ratings": {
+      "get": {
+        "summary": "Fetch episode scores and vote counts for the rating grid.",
+        "operationId": "listEpisodeRatings",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/rskEpisodeRatingList"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": ["search"]
+      }
+    },
     "/api/transcript/{epid}": {
       "get": {
         "summary": "Fetch a transcript and associated metadata.",
@@ -2657,6 +2678,63 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/rskRecipientStats"
+          }
+        }
+      }
+    },
+    "rskEpisodeRating": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "publication": {
+          "type": "string"
+        },
+        "publicationType": {
+          "$ref": "#/definitions/rskPublicationType"
+        },
+        "series": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "episode": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "ratingScore": {
+          "type": "number",
+          "format": "float"
+        },
+        "numRatingScores": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "transcriptAvailable": {
+          "type": "boolean"
+        },
+        "bestof": {
+          "type": "boolean"
+        },
+        "special": {
+          "type": "boolean"
+        },
+        "releaseDate": {
+          "type": "string"
+        }
+      }
+    },
+    "rskEpisodeRatingList": {
+      "type": "object",
+      "properties": {
+        "episodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/rskEpisodeRating"
           }
         }
       }

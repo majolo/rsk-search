@@ -422,6 +422,13 @@ export interface SearchAPIClientInterface {
   /**
    * Response generated for [ 200 ] HTTP response code.
    */
+  listEpisodeRatings(
+    requestHttpOptions?: HttpOptions
+  ): Observable<models.RskEpisodeRatingList>;
+
+  /**
+   * Response generated for [ 200 ] HTTP response code.
+   */
   getTranscript(
     args: {
       epid: string,
