@@ -32,10 +32,13 @@
   </div>
 </nav>
 
-<nav class="sub-nav p-2">
-  <a [routerLink]="['/search']" [routerLinkActive]="['active']" class="mr-1"><i class="bi-folder-fill"></i> Transcripts</a> |
-  <a [routerLink]="['/contribute']" [routerLinkActive]="['active']" class="mx-1"><i class="bi-pencil-fill"></i> Contribute</a> |
-  <a [routerLink]="['/more-shite']" [routerLinkActive]="['active']" class="ml-1"><i class="bi-gift-fill"></i> More Shoddy Shite</a>
+<nav class="sub-nav p-2 d-flex flex-wrap align-items-center justify-content-between" style="gap: 0.5rem">
+  <div>
+    <a [routerLink]="['/search']" [routerLinkActive]="['active']" class="mr-1"><i class="bi-folder-fill"></i> Transcripts</a> |
+    <a [routerLink]="['/contribute']" [routerLinkActive]="['active']" class="mx-1"><i class="bi-pencil-fill"></i> Contribute</a> |
+    <a [routerLink]="['/more-shite']" [routerLinkActive]="['active']" class="ml-1"><i class="bi-gift-fill"></i> More Shoddy Shite</a>
+  </div>
+  <app-random-episode-button></app-random-episode-button>
 </nav>
 
 <app-alert></app-alert>

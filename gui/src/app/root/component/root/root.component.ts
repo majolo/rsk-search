@@ -11,6 +11,7 @@ import { UserMenuComponent } from 'module/shared/component/user-menu/user-menu.c
 import { AlertComponent } from 'module/shared/component/alert/alert.component';
 import { AudioPlayerFixedComponent } from 'module/shared/component/audio-player-fixed/audio-player-fixed.component';
 import { PendingRewardsComponent } from 'module/reward/component/pending-rewards/pending-rewards.component';
+import { RandomEpisodeButtonComponent } from 'module/shared/component/random-episode-button/random-episode-button.component';
 
 @Component({
   selector: 'app-root',
@@ -27,6 +28,7 @@ import { PendingRewardsComponent } from 'module/reward/component/pending-rewards
     AlertComponent,
     AudioPlayerFixedComponent,
     PendingRewardsComponent,
+    RandomEpisodeButtonComponent,
   ],
 })
 export class RootComponent implements OnInit, OnDestroy {

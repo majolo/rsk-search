@@ -1,0 +1,15 @@
+<button
+  type="button"
+  class="btn btn-sm btn-primary"
+  [disabled]="loading() || (!loadFailed() && !episodes().length)"
+  [attr.aria-busy]="loading()"
+  [title]="
+    !loading() && !loadFailed() && !episodes().length
+      ? 'No playable radio or podcast episodes available'
+      : 'Play a random radio or podcast episode from the beginning'
+  "
+  (click)="playRandomEpisode()"
+>
+  <i class="bi-shuffle mr-2" aria-hidden="true"></i>
+  {{ loading() ? "Loading episodes…" : loadFailed() ? "Retry random episode" : "Play random episode" }}
+</button>

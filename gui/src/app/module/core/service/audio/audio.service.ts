@@ -213,7 +213,7 @@ export class AudioService {
     this.audioSourceSub.next({ audioFile: audioUri, audioID: id, audioName: name, mode: mode });
   }
 
-  public playAudio(withOffset?: number): void {
+  public playAudio(withOffset?: number): Promise<void> | undefined {
     if (!this.audio) {
       return;
     }
@@ -224,7 +224,7 @@ export class AudioService {
     if (this.modeSub.getValue() !== PlayerMode.Standalone) {
       this.setPlaybackRate(1);
     }
-    this.audio.play();
+    return this.audio.play();
   }
 
   public pauseAudio(): void {
