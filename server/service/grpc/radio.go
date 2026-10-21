@@ -90,14 +90,22 @@ func (s *RadioService) PutRadioState(ctx context.Context, request *api.PutRadioS
 }
 
 func (s *RadioService) GetRadioNext(ctx context.Context, empty *emptypb.Empty) (*api.NextRadioEpisode, error) {
-	claims, err := GetClaims(ctx, s.auth)
-	if err != nil {
-		return nil, err
+	var authorID string
+	if jwt.ExtractTokenFromRequestContext(ctx) != "" {
+		claims, err := GetClaims(ctx, s.auth)
+		if err != nil {
+			return nil, err
+		}
+		authorID = claims.AuthorID
 	}
 	var nextEpisodeID string
-	err = s.persistentDB.WithStore(func(s *rw.Store) error {
+	err := s.persistentDB.WithStore(func(s *rw.Store) error {
 		var err error
-		nextEpisodeID, err = s.GetRadioNext(ctx, claims.AuthorID)
+		if authorID == "" {
+			nextEpisodeID, err = s.GetRandomRadioEpisode(ctx)
+		} else {
+			nextEpisodeID, err = s.GetRadioNext(ctx, authorID)
+		}
 		return err
 	})
 	if err != nil {

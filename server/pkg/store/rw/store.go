@@ -1653,6 +1653,12 @@ func (s *Store) GetLatestRadioState(ctx context.Context, authorID string) (*mode
 	return state, nil
 }
 
+func (s *Store) GetRandomRadioEpisode(ctx context.Context) (string, error) {
+	var next string
+	err := s.tx.QueryRowContext(ctx, `SELECT episode_id FROM radio_episode ORDER BY RANDOM() LIMIT 1`).Scan(&next)
+	return next, err
+}
+
 func (s *Store) GetRadioNext(ctx context.Context, authorID string) (string, error) {
 	row := s.tx.QueryRowContext(
 		ctx,

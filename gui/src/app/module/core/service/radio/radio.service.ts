@@ -42,6 +42,7 @@ export class RadioService {
 
   start() {
     if (!this.userIsLoggedIn) {
+      this.fetchNext();
       return;
     }
     this.apiClient.getState().subscribe((state) => {
@@ -102,7 +103,7 @@ export class RadioService {
       this.audioService.reset();
       return;
     }
-    this.audioService.setAudioSrcFromEpisodeName(this.state.currentEpisode.shortId, 'RADIO', PlayerMode.Radio);
+    this.audioService.setAudioSrcFromEpisodeName(this.state.currentEpisode.shortId, 'Scrimpton Radio', PlayerMode.Radio);
 
     this.lastUpdateSent = 0;
     this.audioService.seekAudio(this.state.currentTimestampMs ?? 0);
@@ -110,9 +111,6 @@ export class RadioService {
   }
 
   fetchNext() {
-    if (!this.userIsLoggedIn) {
-      return;
-    }
     this.apiClient.getNext().subscribe((next) => {
       this.state = {
         currentEpisode: {

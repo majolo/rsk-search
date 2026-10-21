@@ -15,11 +15,9 @@
           <i class="bi-sun-fill"></i>
         }
       </button>
-      @if (loggedInUser) {
-        <button class="btn btn-transparent btn-lg mr-3" (click)="toggleRadio()" title="Start radio">
-          <i class="bi-boombox" [ngClass]="{ 'text-primary': radioService.active }"></i>
-        </button>
-      }
+      <button class="btn btn-transparent btn-lg mr-3" (click)="toggleRadio()" title="Start radio">
+        <i class="bi-boombox" [ngClass]="{ 'text-primary': radioService.active }"></i>
+      </button>
       @if (!loggedInUser) {
         <a class="btn btn-info btn-lg" [routerLink]="['/me']">
           <i class="bi-person"></i>
