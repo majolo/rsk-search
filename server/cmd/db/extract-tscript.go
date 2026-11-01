@@ -97,6 +97,8 @@ func extract(outputDataPath string, conn *rw.Conn, dryRun bool, logger *zap.Logg
 				}
 			}
 
+			previousEpisode := *episodeOnDisk
+
 			// clear old data
 			episodeOnDisk.Synopsis = nil
 			episodeOnDisk.Transcript = nil
@@ -193,6 +195,10 @@ func extract(outputDataPath string, conn *rw.Conn, dryRun bool, logger *zap.Logg
 				episodeOnDisk.Transcript = append(episodeOnDisk.Transcript, ts.Transcript...)
 				episodeOnDisk.Synopsis = append(episodeOnDisk.Synopsis, ts.Synopsis...)
 				episodeOnDisk.Trivia = append(episodeOnDisk.Trivia, ts.Trivia...)
+			}
+
+			if err := preserveMissingSynopsis(previousEpisode, episodeOnDisk); err != nil {
+				return err
 			}
 
 			contributors := []string{}

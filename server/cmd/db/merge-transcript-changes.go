@@ -102,6 +102,8 @@ func mergeAll(outputDataPath string, migrationsPath string, conn *rw.Conn, dryRu
 				panic("nil episode encountered: " + v.EpID)
 			}
 
+			previousEpisode := *episodeOnDisk
+
 			// clear old data
 			episodeOnDisk.Synopsis = nil
 			episodeOnDisk.Transcript = nil
@@ -123,6 +125,10 @@ func mergeAll(outputDataPath string, migrationsPath string, conn *rw.Conn, dryRu
 			episodeOnDisk.Transcript = append(episodeOnDisk.Transcript, ts.Transcript...)
 			episodeOnDisk.Synopsis = append(episodeOnDisk.Synopsis, ts.Synopsis...)
 			episodeOnDisk.Trivia = append(episodeOnDisk.Trivia, ts.Trivia...)
+
+			if err := preserveMissingSynopsis(previousEpisode, episodeOnDisk); err != nil {
+				return err
+			}
 
 			// metadata
 			if v.Summary != "" {
