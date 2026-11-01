@@ -198,7 +198,8 @@ func extract(outputDataPath string, conn *rw.Conn, dryRun bool, logger *zap.Logg
 			}
 
 			if err := preserveMissingSynopsis(previousEpisode, episodeOnDisk); err != nil {
-				return err
+				logger.Warn("Skipping transcript export to preserve existing synopsis", zap.String("episode", episodeOnDisk.ID()), zap.Error(err))
+				continue
 			}
 
 			contributors := []string{}

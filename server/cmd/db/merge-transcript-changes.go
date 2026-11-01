@@ -127,7 +127,9 @@ func mergeAll(outputDataPath string, migrationsPath string, conn *rw.Conn, dryRu
 			episodeOnDisk.Trivia = append(episodeOnDisk.Trivia, ts.Trivia...)
 
 			if err := preserveMissingSynopsis(previousEpisode, episodeOnDisk); err != nil {
-				return err
+				logger.Warn("Skipping transcript change to preserve existing synopsis", zap.String("episode", episodeOnDisk.ID()), zap.String("change_id", v.ID), zap.Error(err))
+				// Leave the JSON untouched and this change out of the merged migration.
+				continue
 			}
 
 			// metadata
